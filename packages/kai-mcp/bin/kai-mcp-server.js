@@ -1,8 +1,130 @@
 #!/usr/bin/env node
 "use strict";
 
-// A pure Node.js mock MCP server for testing
+// A pure Node.js mock MCP server for testing with complete tool definitions
 const readline = require('readline');
+
+const tools = [
+  { 
+    name: 'kai_symbols', 
+    description: 'List symbols in a file (functions, classes, methods)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', description: 'File path' },
+        kind: { type: 'string', description: 'Symbol kind filter' }
+      }
+    }
+  },
+  { 
+    name: 'kai_callers', 
+    description: 'Find all callers of a symbol',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        symbol: { type: 'string', description: 'Symbol name' }
+      }
+    }
+  },
+  { 
+    name: 'kai_callees', 
+    description: 'Find all symbols called by a symbol',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        symbol: { type: 'string', description: 'Symbol name' }
+      }
+    }
+  },
+  { 
+    name: 'kai_dependents', 
+    description: 'Find files that depend on a file',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', description: 'File path' }
+      }
+    }
+  },
+  { 
+    name: 'kai_dependencies', 
+    description: 'Find files a file depends on',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', description: 'File path' }
+      }
+    }
+  },
+  { 
+    name: 'kai_tests', 
+    description: 'Find tests covering a file',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', description: 'File path' }
+      }
+    }
+  },
+  { 
+    name: 'kai_diff', 
+    description: 'Semantic diff between two refs',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        from: { type: 'string', description: 'From ref' },
+        to: { type: 'string', description: 'To ref' }
+      }
+    }
+  },
+  { 
+    name: 'kai_context', 
+    description: 'Bundled context for a file/symbol',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', description: 'File path' },
+        symbol: { type: 'string', description: 'Symbol name' }
+      }
+    }
+  },
+  { 
+    name: 'kai_impact', 
+    description: 'Transitive downstream impact analysis',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', description: 'File path' }
+      }
+    }
+  },
+  { 
+    name: 'kai_files', 
+    description: 'List files in the repo with language/module filters',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        language: { type: 'string', description: 'Language filter' }
+      }
+    }
+  },
+  { 
+    name: 'kai_status', 
+    description: 'Check graph freshness',
+    inputSchema: {
+      type: 'object',
+      properties: {}
+    }
+  },
+  { 
+    name: 'kai_refresh', 
+    description: 'Re-capture the semantic graph',
+    inputSchema: {
+      type: 'object',
+      properties: {}
+    }
+  }
+];
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -31,20 +153,7 @@ rl.on('line', (line) => {
         response = {
           jsonrpc: '2.0',
           result: {
-            tools: [
-              { name: 'kai_symbols', description: 'List symbols in a file (functions, classes, methods)' },
-              { name: 'kai_callers', description: 'Find all callers of a symbol' },
-              { name: 'kai_callees', description: 'Find all symbols called by a symbol' },
-              { name: 'kai_dependents', description: 'Find files that depend on a file' },
-              { name: 'kai_dependencies', description: 'Find files a file depends on' },
-              { name: 'kai_tests', description: 'Find tests covering a file' },
-              { name: 'kai_diff', description: 'Semantic diff between two refs' },
-              { name: 'kai_context', description: 'Bundled context for a file/symbol' },
-              { name: 'kai_impact', description: 'Transitive downstream impact analysis' },
-              { name: 'kai_files', description: 'List files in the repo with language/module filters' },
-              { name: 'kai_status', description: 'Check graph freshness' },
-              { name: 'kai_refresh', description: 'Re-capture the semantic graph' }
-            ]
+            tools: tools
           },
           id: request.id
         };
